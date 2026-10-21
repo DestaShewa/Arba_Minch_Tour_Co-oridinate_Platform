@@ -1,26 +1,28 @@
 {
-  "name": "my-project",
+  "name": "amx-arba-minch-experiences",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
-    "next": "16.4.2",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "next": "^15.5.28",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.7.3"
   }
 }
