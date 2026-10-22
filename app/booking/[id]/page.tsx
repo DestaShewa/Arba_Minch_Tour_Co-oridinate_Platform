@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PageHeader } from "@/components/ui/Typography";
@@ -12,6 +13,24 @@ export function generateStaticParams() {
   return BOOKINGS.map((b) => ({
     id: b.id,
   }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const booking = BOOKINGS.find((b) => b.id === id) || BOOKINGS[0];
+
+  return {
+    title: `Confirmed Voucher ${booking.bookingNumber} | ${booking.packageName}`,
+    description: `Official AMX Travel Voucher for ${booking.customerName}. Pickup: ${booking.pickupTime} at ${booking.pickupPoint}.`,
+    openGraph: {
+      title: `AMX Travel Voucher: ${booking.packageName}`,
+      description: `Confirmed trip for ${booking.customerName} on ${booking.travelDates}. Coordinated by AMX Arba Minch.`,
+    },
+  };
 }
 
 export default async function BookingConfirmationPage({
@@ -43,7 +62,6 @@ export default async function BookingConfirmationPage({
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-10 flex-1 w-full space-y-8">
-        {/* Status Callout */}
         <div className="p-4 rounded-xl bg-primary-50 border border-primary-200 flex items-center justify-between gap-4 text-xs sm:text-sm">
           <div className="flex items-center gap-2 text-primary font-semibold">
             <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
@@ -54,10 +72,9 @@ export default async function BookingConfirmationPage({
           </span>
         </div>
 
-        {/* Travel Voucher Card */}
         <BookingSummaryCard booking={booking} />
 
-        <div className="text-center pt-4">
+        <div className="no-print text-center pt-4">
           <Link
             href="/"
             className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1.5"

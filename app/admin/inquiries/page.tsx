@@ -1,21 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { AdminTable } from "@/components/layout/AdminTable";
 import { StatusBadge } from "@/components/ui/Badge";
+import { SLACountdownBadge } from "@/components/admin/SLACountdownBadge";
 import { TextInput } from "@/components/forms/TextInput";
-import { INQUIRIES } from "@/data/inquiries";
-import { InquiryStatus } from "@/types/inquiry";
-import { Search, Filter, Plus } from "lucide-react";
+import { inquiryService } from "@/lib/services/inquiryService";
+import { TripInquiry } from "@/types/inquiry";
+import { Search, Plus } from "lucide-react";
 
 export default function AdminInquiriesPage() {
+  const [inquiries, setInquiries] = useState<TripInquiry[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredInquiries = INQUIRIES.filter((inq) => {
-    const matchesFilter =
-      selectedFilter === "all" || inq.status === selectedFilter;
+  useEffect(() => {
+    setInquiries(inquiryService.getAll());
+  }, []);
+
+  const filteredInquiries = inquiries.filter((inq) => {
+    const matchesFilter = selectedFilter === "all" || inq.status === selectedFilter;
     const matchesSearch =
       inq.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       inq.referenceNumber.toLowerCase().includes(searchQuery.toLowerCase());
@@ -50,7 +55,6 @@ export default function AdminInquiriesPage() {
         </Link>
       </div>
 
-      {/* Filter Tabs & Search Bar */}
       <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
         <div className="flex flex-wrap gap-1.5 border-b md:border-b-0 border-sand-300 pb-2 md:pb-0">
           {filterTabs.map((tab) => (
@@ -79,16 +83,14 @@ export default function AdminInquiriesPage() {
         </div>
       </div>
 
-      {/* Comprehensive Inquiries Table */}
       <AdminTable
         headers={[
           "Ref & Customer",
           "Package",
           "Travel Date",
-          "Group Size",
           "Status",
+          "SLA Window",
           "Assigned Coordinator",
-          "Last Activity",
           "Next Action",
           "Action",
         ]}
@@ -100,25 +102,20 @@ export default function AdminInquiriesPage() {
                 {inq.referenceNumber}
               </span>
               <strong className="text-charcoal block">{inq.fullName}</strong>
-              <span className="text-xs text-charcoal-muted">
-                {inq.whatsappNumber}
-              </span>
+              <span className="text-xs text-charcoal-muted">{inq.whatsappNumber}</span>
             </td>
             <td className="py-3 px-4 text-xs font-medium text-charcoal max-w-[140px] truncate">
               {inq.packageSlug?.replace(/-/g, " ") || "Custom Trip"}
             </td>
             <td className="py-3 px-4 text-xs text-charcoal">{inq.travelDate}</td>
-            <td className="py-3 px-4 text-xs text-charcoal">
-              {inq.numberOfTravelers} Guests
-            </td>
             <td className="py-3 px-4">
               <StatusBadge status={inq.status} />
             </td>
+            <td className="py-3 px-4">
+              <SLACountdownBadge createdAt={inq.createdAt} status={inq.status} />
+            </td>
             <td className="py-3 px-4 text-xs text-charcoal">
               {inq.assignedCoordinator || "Unassigned"}
-            </td>
-            <td className="py-3 px-4 text-xs text-charcoal-muted max-w-[160px] truncate">
-              {inq.lastActivity}
             </td>
             <td className="py-3 px-4 text-xs text-secondary-800 font-medium max-w-[180px] truncate">
               {inq.nextAction}

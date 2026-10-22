@@ -8,12 +8,27 @@ import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/Card";
 import { WhatsAppButton, SecondaryButton } from "@/components/ui/Button";
 import { AMX_BRAND } from "@/lib/constants";
-import { CheckCircle2, Clock, ShieldCheck, ArrowRight, MessageSquare, FileText } from "lucide-react";
+import { CheckCircle2, Clock, ArrowRight, FileText } from "lucide-react";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const ref = searchParams.get("ref") || "AMX-REQ-8492";
   const name = searchParams.get("name") || "Traveler";
+  const pkg = searchParams.get("pkg") || "lake-chamo-experience";
+  const transport = searchParams.get("transport") || "yes";
+  const hotel = searchParams.get("hotel") || "no";
+
+  // Build Machine-Readable WhatsApp Message Payload
+  const structuredWhatsAppMessage = `Hello AMX Coordinator,
+I have submitted a trip request:
+
+*Reference:* ${ref}
+*Name:* ${name}
+*Package:* ${pkg.replace(/-/g, " ")}
+*Transport Needed:* ${transport === "yes" ? "Yes (4WD/Car)" : "No"}
+*Hotel Needed:* ${hotel === "yes" ? "Yes" : "No"}
+
+Please check availability and send my itemized ETB quotation.`;
 
   return (
     <div className="min-h-screen flex flex-col bg-warmWhite">
@@ -51,15 +66,15 @@ function SuccessContent() {
             </div>
           </div>
 
-          {/* Pre-filled WhatsApp Action */}
+          {/* Structured Pre-filled WhatsApp Action */}
           <div className="space-y-3 pt-2">
             <p className="text-xs text-charcoal-muted">
               Want immediate confirmation? Connect directly with our on-duty coordinator:
             </p>
             <WhatsAppButton
               size="lg"
-              className="w-full"
-              message={`Hello AMX, I submitted request ${ref} for ${name}. I would like to check on my quotation.`}
+              className="w-full font-bold"
+              message={structuredWhatsAppMessage}
             >
               Open WhatsApp with Reference {ref}
             </WhatsAppButton>
@@ -114,12 +129,12 @@ function SuccessContent() {
             </span>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/quotation/qt-001" className="flex-1">
-                <SecondaryButton variant="outline" size="sm" className="w-full text-xs">
+                <SecondaryButton variant="outline" size="sm" className="w-full text-xs font-semibold">
                   View Sample Quotation
                 </SecondaryButton>
               </Link>
               <Link href="/booking/bk-7319" className="flex-1">
-                <SecondaryButton variant="outline" size="sm" className="w-full text-xs">
+                <SecondaryButton variant="outline" size="sm" className="w-full text-xs font-semibold">
                   View Sample Booking
                 </SecondaryButton>
               </Link>

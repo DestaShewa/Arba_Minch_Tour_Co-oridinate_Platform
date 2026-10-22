@@ -5,13 +5,21 @@ import { formatETB } from "@/lib/utils";
 import { Booking } from "@/types/booking";
 import { Card } from "@/components/ui/Card";
 import { Button, WhatsAppButton } from "@/components/ui/Button";
-import { ShieldCheck, MapPin, Phone, Printer } from "lucide-react";
+import { ShieldCheck, MapPin, Phone, Printer, WifiOff, Award } from "lucide-react";
 
 export const BookingSummaryCard: React.FC<{ booking: Booking }> = ({
   booking,
 }) => {
   return (
-    <Card className="max-w-3xl mx-auto p-6 sm:p-8 space-y-8 bg-white border border-sand-300 shadow-md">
+    <Card className="print-card max-w-3xl mx-auto p-6 sm:p-8 space-y-8 bg-white border border-sand-300 shadow-md">
+      {/* Offline Recommendation Alert (Screen Only) */}
+      <div className="no-print p-3 rounded-lg bg-sand-100 border border-sand-300 text-xs text-charcoal-muted flex items-start gap-2.5">
+        <WifiOff className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+        <span>
+          <strong>Recommended:</strong> Mobile reception on Lake Chamo water and high Dorze peaks can be intermittent. Take a screenshot or click <strong>Print / Save PDF</strong> to store this voucher offline.
+        </span>
+      </div>
+
       {/* Travel Voucher Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b border-sand-200">
         <div>
@@ -23,12 +31,18 @@ export const BookingSummaryCard: React.FC<{ booking: Booking }> = ({
           </h2>
           <p className="text-xs text-charcoal-muted mt-0.5">
             Booking Ref:{" "}
-            <strong className="text-charcoal">{booking.bookingNumber}</strong>
+            <strong className="text-charcoal font-mono">{booking.bookingNumber}</strong>
           </p>
         </div>
-        <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-300 uppercase">
-          {booking.status}
-        </span>
+
+        <div className="flex flex-col items-start sm:items-end gap-1.5">
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-300 uppercase">
+            {booking.status}
+          </span>
+          <span className="text-[11px] text-charcoal-muted font-mono">
+            Issued by AMX Arba Minch Desk
+          </span>
+        </div>
       </div>
 
       {/* Guest & Pickup Details */}
@@ -44,7 +58,7 @@ export const BookingSummaryCard: React.FC<{ booking: Booking }> = ({
           <span className="text-xs text-charcoal-muted">Scheduled Pickup:</span>
           <p className="font-bold text-charcoal">{booking.pickupTime}</p>
           <p className="text-xs text-charcoal-muted flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-accent" />
+            <MapPin className="w-3.5 h-3.5 text-accent shrink-0" />
             {booking.pickupPoint}
           </p>
         </div>
@@ -86,32 +100,33 @@ export const BookingSummaryCard: React.FC<{ booking: Booking }> = ({
         </ul>
       </div>
 
-      {/* Emergency & Payment Footer */}
+      {/* Official AMX Seal & Duty Desk Box */}
       <div className="p-4 rounded-lg bg-primary-50 border border-primary-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-sm">
-        <div>
-          <span className="text-xs text-charcoal-muted">
-            Emergency Local Contact:
-          </span>
-          <p className="font-bold text-primary flex items-center gap-1.5 mt-0.5">
-            <Phone className="w-4 h-4 text-accent" />
-            {booking.emergencyContact.phone} ({booking.emergencyContact.title})
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-primary font-bold text-xs">
+            <Award className="w-4 h-4 text-accent" />
+            <span>Official AMX Verified Voucher</span>
+          </div>
+          <p className="text-xs text-charcoal-muted">
+            Emergency 24/7 Coordinator Desk: <strong className="text-charcoal">{booking.emergencyContact.phone}</strong>
           </p>
         </div>
+
         <div className="text-left sm:text-right">
-          <span className="text-xs text-charcoal-muted">Payment Status:</span>
+          <span className="text-xs text-charcoal-muted block">Payment Settlement:</span>
           <p className="font-bold text-charcoal uppercase text-xs">
             {booking.paymentStatus.replace("_", " ")} ({formatETB(booking.totalPriceETB)})
           </p>
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-3 pt-2">
+      {/* Action Buttons (Excluded from Print) */}
+      <div className="no-print flex flex-wrap gap-3 pt-2">
         <Button
           variant="outline"
           size="sm"
           onClick={() => window.print()}
-          className="flex-1 sm:flex-none"
+          className="flex-1 sm:flex-none font-semibold"
         >
           <Printer className="w-4 h-4 mr-2" />
           Print / Save PDF
@@ -120,7 +135,7 @@ export const BookingSummaryCard: React.FC<{ booking: Booking }> = ({
           phoneNumber={booking.emergencyContact.phone}
           message={`Hello, I have an inquiry about my confirmed AMX booking ${booking.bookingNumber}.`}
           size="sm"
-          className="flex-1 sm:flex-none"
+          className="flex-1 sm:flex-none font-semibold"
         >
           WhatsApp Support
         </WhatsAppButton>
