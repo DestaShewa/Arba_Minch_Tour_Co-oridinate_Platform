@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { ProviderAdminSubNav } from "@/components/admin/ProviderAdminSubNav";
 import { AdminTable } from "@/components/layout/AdminTable";
 import { PROVIDERS } from "@/data/providers";
 import { VerifiedBadge } from "@/components/ui/Badge";
@@ -21,11 +22,13 @@ export default function AdminProvidersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-primary">Provider Management</h1>
+        <h1 className="text-2xl font-bold text-primary">Provider Network Hub</h1>
         <p className="text-xs text-charcoal-muted mt-0.5">
-          Vetted local guides, drivers, boat operators, and accommodations.
+          Vetted local guides, drivers, boat operators, and accommodations in Arba Minch.
         </p>
       </div>
+
+      <ProviderAdminSubNav />
 
       <AdminTable
         headers={[
@@ -44,7 +47,7 @@ export default function AdminProvidersPage() {
               {prov.name}
             </td>
             <td className="py-3 px-4 text-xs uppercase text-charcoal-muted">
-              {prov.role.replace("_", " ")}
+              {prov.role.replace(/_/g, " ")}
             </td>
             <td className="py-3 px-4">
               <VerifiedBadge lastCheckedDate={prov.lastCheckedDate} />

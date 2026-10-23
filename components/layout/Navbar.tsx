@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { AMX_BRAND } from "@/lib/constants";
 import { PrimaryButton, WhatsAppButton } from "@/components/ui/Button";
 import { Drawer } from "@/components/ui/Modal";
-import { Menu, ShieldCheck } from "lucide-react";
+import { Menu, Briefcase } from "lucide-react";
 
 export const Navbar: React.FC = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -51,9 +51,16 @@ export const Navbar: React.FC = () => {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/become-provider"
+            className="text-xs font-bold text-secondary-800 hover:text-primary bg-secondary-50 border border-secondary-200 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 min-h-[36px]"
+          >
+            <Briefcase className="w-3.5 h-3.5" />
+            <span>Become a Provider</span>
+          </Link>
         </nav>
 
-        {/* CTA & Mobile Trigger */}
+        {/* Action Buttons & Mobile Trigger */}
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2">
             <WhatsAppButton size="sm" className="hidden lg:inline-flex" />
@@ -80,7 +87,7 @@ export const Navbar: React.FC = () => {
         position="right"
       >
         <div className="flex flex-col justify-between h-full space-y-6">
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex flex-col space-y-1.5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -95,11 +102,22 @@ export const Navbar: React.FC = () => {
                 {link.label}
               </Link>
             ))}
+
+            <div className="pt-2">
+              <Link
+                href="/become-provider"
+                onClick={() => setIsMobileOpen(false)}
+                className="min-h-[44px] px-3 py-2.5 rounded-md text-sm font-bold flex items-center gap-2 bg-amber-50 text-accent border border-amber-200"
+              >
+                <Briefcase className="w-4 h-4" />
+                <span>Become an AMX Provider</span>
+              </Link>
+            </div>
           </nav>
 
           <div className="space-y-3 pt-6 border-t border-sand-200">
             <Link href="/request" onClick={() => setIsMobileOpen(false)} className="block">
-              <PrimaryButton className="w-full">Request a Trip</PrimaryButton>
+              <PrimaryButton className="w-full font-bold">Request a Trip</PrimaryButton>
             </Link>
             <WhatsAppButton className="w-full" />
             <div className="pt-2 text-center text-xs text-charcoal-muted">

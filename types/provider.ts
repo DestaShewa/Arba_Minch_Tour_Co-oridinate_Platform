@@ -1,14 +1,16 @@
-export type ProviderRole = "guide" | "driver" | "boat_operator" | "hotel";
+import { ProviderType, VerificationStatus } from "./provider-onboarding";
+
+export type ProviderRole = ProviderType;
 
 export interface VehicleDetails {
-  type: string; // e.g., "4WD Land Cruiser", "Toyota HiAce Minibus"
+  type: string;
   capacity: number;
   hasAirConditioning: boolean;
   plateNumberPreview?: string;
 }
 
 export interface BoatDetails {
-  vesselType: string; // e.g., "Motorized Lake Boat"
+  vesselType: string;
   lifeJacketsProvided: boolean;
   maxPassengers: number;
   engineHorsepower?: string;
@@ -21,14 +23,15 @@ export interface Provider {
   role: ProviderRole;
   photo: string;
   isVerified: boolean;
-  lastCheckedDate: string; // e.g., "October 2026"
-  languages: string[]; // e.g., ["English", "Amharic", "Dorze"]
+  verificationStatus?: VerificationStatus;
+  lastCheckedDate: string;
+  languages: string[];
   experienceYears: number;
-  serviceArea: string; // e.g., "Lake Chamo & Nech Sar", "Dorze Highlands & Chencha"
-  contactMethod: string; // e.g., "Via AMX Coordinator"
+  serviceArea: string;
+  contactMethod: string;
   shortBio: string;
   servicesOffered: string[];
-  priceRangeETB: string; // e.g., "1,500 - 2,500 ETB / day"
+  priceRangeETB: string;
   vehicleDetails?: VehicleDetails;
   boatDetails?: BoatDetails;
   relatedPackageSlugs: string[];

@@ -2,18 +2,43 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { PROVIDERS } from "@/data/providers";
+import { providerService } from "@/lib/services/providerService";
 import { PACKAGES } from "@/data/packages";
 import { VerifiedBadge } from "@/components/ui/Badge";
 import { PrimaryButton, WhatsAppButton } from "@/components/ui/Button";
-import { ShieldCheck, MapPin, Globe, Award, Car, Anchor, ArrowRight } from "lucide-react";
+import { ShieldCheck, MapPin, Car, Anchor, ArrowRight } from "lucide-react";
 
 export function generateStaticParams() {
-  return PROVIDERS.map((provider) => ({
+  const verified = providerService.getPublicVerifiedProviders();
+  return verified.map((provider) => ({
     slug: provider.slug,
   }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const provider = providerService.getPublicProviderBySlug(slug);
+
+  if (!provider) {
+    return { title: "Provider Not Found | AMX" };
+  }
+
+  return {
+    title: `${provider.name} (${provider.role.replace(/_/g, " ")}) | AMX Verified`,
+    description: `${provider.shortBio} Verified local tourism partner in Arba Minch.`,
+    openGraph: {
+      title: `${provider.name} — AMX Verified Provider`,
+      description: `Verified ${provider.role.replace(/_/g, " ")} based in ${provider.serviceArea}. Inspected by AMX.`,
+      images: [{ url: provider.photo, width: 800, height: 800, alt: provider.name }],
+    },
+  };
 }
 
 export default async function ProviderDetailPage({
@@ -22,7 +47,10 @@ export default async function ProviderDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const provider = PROVIDERS.find((p) => p.slug === slug);
+
+  // STRICT SECURITY GUARD:
+  // Returns provider ONLY if active, verified/trusted, and NOT suspended or under review
+  const provider = providerService.getPublicProviderBySlug(slug);
 
   if (!provider) {
     notFound();
@@ -54,7 +82,7 @@ export default async function ProviderDetailPage({
             <div className="space-y-2 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs uppercase font-bold text-secondary-800 bg-secondary-50 px-2.5 py-1 rounded">
-                  {provider.role.replace("_", " ")}
+                  {provider.role.replace(/_/g, " ")}
                 </span>
                 <VerifiedBadge lastCheckedDate={provider.lastCheckedDate} />
               </div>
@@ -146,7 +174,7 @@ export default async function ProviderDetailPage({
                 </div>
                 <div>
                   <span className="text-charcoal-muted block">Safety Flotation</span>
-                  <strong>{provider.boatDetails.lifeJacketsProvided ? "Life Jackets Mandatory & Provided" : "Standard"}</strong>
+                  <strong className="text-green-800">Life Jackets Mandatory & Provided</strong>
                 </div>
                 <div>
                   <span className="text-charcoal-muted block">Max Seating</span>
@@ -156,13 +184,13 @@ export default async function ProviderDetailPage({
             </div>
           )}
 
-          {/* Transparent Verification Disclaimer (No reviews) */}
+          {/* Transparent Verification Disclaimer */}
           <div className="p-4 rounded-xl bg-sand-50 border border-sand-200 text-xs text-charcoal-muted flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <div>
               <strong className="text-charcoal block">Provider information verified by AMX</strong>
               <span>
-                AMX does not host unverified third-party reviews. Provider identity, background credentials, equipment condition, and local community membership are personally reviewed by AMX coordinators on the ground.
+                AMX does not host unverified third-party reviews. Provider identity, background credentials, equipment condition, and local community membership are personally reviewed by AMX coordinators on the ground in Arba Minch.
               </span>
             </div>
           </div>

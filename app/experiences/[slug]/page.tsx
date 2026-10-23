@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { PACKAGES } from "@/data/packages";
-import { PROVIDERS } from "@/data/providers";
+import { providerService } from "@/lib/services/providerService";
 import { PackageSubNav } from "@/components/public/PackageSubNav";
 import { ItineraryTimeline } from "@/components/public/ItineraryTimeline";
 import { InclusionList } from "@/components/public/InclusionList";
@@ -61,7 +61,9 @@ export default async function ExperienceDetailPage({
     notFound();
   }
 
-  const assignedProviders = PROVIDERS.filter((pr) =>
+  // STRICT SECURITY GUARD: Ensure only verified providers appear on package detail
+  const verifiedList = providerService.getPublicVerifiedProviders();
+  const assignedProviders = verifiedList.filter((pr) =>
     pkg.featuredProviderIds.includes(pr.id)
   );
 
@@ -131,9 +133,9 @@ export default async function ExperienceDetailPage({
                 <div className="pt-2 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <PriceTag
-                      amountETB={pkg.startingPriceETB}
-                      isCustom={pkg.priceType === "custom_quotation"}
-                    />
+  amountETB={pkg.startingPriceETB}
+  isCustom={pkg.priceType === "custom_quotation"}
+/>
                     <CurrencyToggle />
                   </div>
                   <p className="text-xs text-charcoal-muted">{pkg.priceNote}</p>
@@ -147,7 +149,7 @@ export default async function ExperienceDetailPage({
                     <WhatsAppButton
                       size="lg"
                       message={`Hello AMX, I would like to inquire about the ${pkg.title}.`}
-                      className="flex-1"
+                      className="flex-1 font-bold"
                     >
                       Ask on WhatsApp
                     </WhatsAppButton>
@@ -164,7 +166,7 @@ export default async function ExperienceDetailPage({
         {/* Sticky Horizontal Sub-Navigation */}
         <PackageSubNav />
 
-        {/* Main Content Layout with Anchors */}
+        {/* Main Content Layout with Section Anchors */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12 space-y-16">
           {/* Overview & Highlights */}
           <section id="overview" className="scroll-mt-28 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -308,7 +310,7 @@ export default async function ExperienceDetailPage({
           )}
         </main>
 
-        {/* Sticky Mobile CTA Bar */}
+        {/* Sticky Mobile CTA Bar with iOS gesture bar safe-area padding */}
         <aside
           aria-label="Quick booking"
           className="fixed bottom-0 left-0 right-0 p-3.5 safe-bottom-cta bg-white/95 backdrop-blur-md border-t border-sand-300 md:hidden z-30 flex items-center justify-between gap-3 shadow-lg"
